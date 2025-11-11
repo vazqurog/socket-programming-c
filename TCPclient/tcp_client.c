@@ -3,10 +3,16 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include <netinet/in.h>
 
 int main() {
+
+    /*
+     === Client side work flow ===
+    socket() -> connect() -> receive() -> close()
+    */
 
     // Create a socket
     int network_socket;
@@ -22,24 +28,24 @@ int main() {
 
     // Specify port: 9002
     server_address.sin_port = htons(port);
-    server_address.sin_addr.s_addr = INADDR_ANY();
+    server_address.sin_addr.s_addr = INADDR_ANY;
     
     // Connect to port
-    int conection_status = connect(network_socket, (struct sockaddr * ) &server_address, sizeof(server_address));
+    int connection_status = connect(network_socket, (struct sockaddr*) &server_address, sizeof(server_address));
 
     if (connection_status == -1) {
         printf("Error:Failed making a coneection to remote socket\n");
     } else {
-        prtinf("Successfully connected to remote socket\n");
+        printf("Successfully connected to remote socket\n");
     }
 
     // Receive data from the server
     char server_response[256];
-    receive(network_socket, &server_response, sizeof(server_response), 0);
+    recv(network_socket, &server_response, sizeof(server_response), 0);
 
     // print server data
     printf("Server response: %s\n", server_response);
 
-    close(sock);
+    close(network_socket);
     return 0;
 }
