@@ -35,6 +35,11 @@ int main() {
 
     // Receive data from the server
     char server_response[256];
-    receive(network_socket, &server_response, );
+    receive(network_socket, &server_response, sizeof(server_response), 0);
+
+    // print server data
+    printf("Server response: %s\n", server_response);
+
+    close(sock);
     return 0;
 }
