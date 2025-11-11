@@ -3,8 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <unistd.h> // used to close socket on unix based
-
+#include <unistd.h> // used on unix based
 #include <netinet/in.h>
 
 int main() {
@@ -15,10 +14,10 @@ int main() {
 
     */
 
-    char server_message[256] = "You have reached the server!\n";
+    char server_message[256] = "You have entered... the server\n";
     int port = 9002;
     
-    // create sercer socket
+    // create server socket
     int server_socket;
     server_socket = socket(AF_INET, SOCK_STREAM,0);
 
@@ -29,20 +28,48 @@ int main() {
     server_address.sin_addr.s_addr = INADDR_ANY;
     
     // bind the socket to out specified port
-    bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));
+    int bind_status = bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));
+    if (bind_status == -1) {
+        printf("Error: socket bind failed\n");
+    } else {
+        printf("Socket binded\n");
+    }
 
     // listen to any packets coming to that port
-    listen(server_socket, 5);
+    int listen_status = listen(server_socket, 5);
+
+    if (listen_status == -1) {
+        printf("Error: listening stopped\n");
+    } else {
+        printf("Listening for packets...\n");
+    }    
 
     // accept connection
     int client_socket;
     client_socket = accept(server_socket, NULL, NULL);
+    if (client_socket == -1){
+        printf("Denied: Client Connection\n");
+    } else {
+        printf("Accepted: Client Connection\n");
+    }
 
     // send message
-    send(client_socket, server_message, sizeof(server_message), 0);
+    int send_status = send(client_socket, server_message, sizeof(server_message), 0);
+
+    if (send_status == -1) {
+        printf("Failed to send packets to client\n");
+    } else {
+        printf("Packet sent\n");
+    }
 
     // close socket
-    close(server_socket);
+    int close_status = close(server_socket);
+
+    if (close_status == -1) {
+        printf("Failed to close connection to port %i\n", port);
+    } else {
+        printf("Closed connectoion to port %i\n", port);
+    }
 
     return 0;
 }

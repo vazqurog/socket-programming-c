@@ -30,22 +30,31 @@ int main() {
     server_address.sin_port = htons(port);
     server_address.sin_addr.s_addr = INADDR_ANY;
     
-    // Connect to port
+    // Connect to port 
     int connection_status = connect(network_socket, (struct sockaddr*) &server_address, sizeof(server_address));
-
     if (connection_status == -1) {
-        printf("Error:Failed making a coneection to remote socket\n");
+        printf("Error: Failed making a coneection to remote socket\n");
     } else {
-        printf("Successfully connected to remote socket\n");
+        printf("Successfull Connection: port - %i\n", port);
     }
 
     // Receive data from the server
     char server_response[256];
-    recv(network_socket, &server_response, sizeof(server_response), 0);
+    int recv_status = recv(network_socket, &server_response, sizeof(server_response) - 1, 0);
+    if (recv_status == -1) {
+        printf("Error: Packets not received\n");
+    } else {
+        printf("Packets Received\n");
+    }
 
     // print server data
-    printf("Server response: %s\n", server_response);
+    printf("Packet data: %s\n", server_response);
 
-    close(network_socket);
+    int close_status = close(network_socket);
+    if (close_status == -1) {
+        printf("Failed close connection: port - %i\n", port);
+    } else {
+        printf("Closed connectoion: port - %i\n", port);
+    }
     return 0;
 }
