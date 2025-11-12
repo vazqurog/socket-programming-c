@@ -4,6 +4,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 
 int main() {
     // create file object, open in read
@@ -53,7 +54,6 @@ int main() {
         client_socket = accept(server_socket, NULL, NULL);
         send(client_socket, http_header, sizeof(http_header), 0);
         close(client_socket);
-
     }
     return 0;
 }
